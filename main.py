@@ -3,6 +3,8 @@
 import json
 import urllib.request
 
+from database import Database
+
 BASE_API_LINK = "https://hacker-news.firebaseio.com/v0"
 HIRING_BOT_ID = "whoishiring"
 
@@ -41,7 +43,12 @@ def determine_job_skills(comment_body: str):
     pass
 
 
+db = Database()
 threads = get_hiring_threads(10)
 comments = get_top_level_comments(threads[0])
+print(get_user_thread_link(comments[0]))
 print(get_thread_desc(comments[0]))
+print("Trying DB")
+db.init_db()
+db.query_postings()
 # print(get_hiring_threads(10))
