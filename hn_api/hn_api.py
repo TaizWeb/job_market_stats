@@ -76,8 +76,8 @@ class Api:
         parent_link = f"{BASE_API_LINK}/item/{thread_id}.json"
         return self.link_to_json(parent_link)["kids"][:child_count]
 
-    def get_thread_desc(self, thread_id: str):
-        """Gets a thread's description
+    def get_thread_info(self, thread_id: str):
+        """Gets a thread's information (id, time, text)
 
         Parameters
         ----------
@@ -86,11 +86,13 @@ class Api:
 
         Returns
         -------
-        body_text: str
-            The description of the thread_id provided
+        post_contents: dict
+            A dict containing the post's id, creation time, and body text
         """
         parent_link = f"{BASE_API_LINK}/item/{thread_id}.json"
-        return self.link_to_json(parent_link)["text"]
-
-    def determine_job_skills(self, comment_body: str):
-        pass
+        parent_json = self.link_to_json(parent_link)
+        return {
+            "post_id": thread_id,
+            "post_time": parent_json["time"],
+            "post_text": parent_json["text"],
+        }
