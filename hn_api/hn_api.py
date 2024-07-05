@@ -91,8 +91,16 @@ class Api:
         """
         parent_link = f"{BASE_API_LINK}/item/{thread_id}.json"
         parent_json = self.link_to_json(parent_link)
-        return {
-            "post_id": thread_id,
-            "post_time": parent_json["time"],
-            "post_text": parent_json["text"],
-        }
+        # Dead/deleted posts are still returned, handling them
+        if "deleted" in parent_json:
+            return
+
+        try:
+            return {
+                "post_id": int(thread_id),
+                "post_time": parent_json["time"],
+                "post_text": parent_json["text"],
+            }
+        except KeyError:
+            print("KEY ERR")
+            print(parent_json)
