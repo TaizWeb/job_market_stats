@@ -17,6 +17,7 @@ class Database:
             """
             CREATE TABLE IF NOT EXISTS postings (
                 id INTEGER PRIMARY KEY,
+                comment_id INTEGER NOT NULL UNIQUE,
                 year INTEGER NOT NULL,
                 text TEXT NOT NULL UNIQUE
             )
@@ -29,9 +30,9 @@ class Database:
 
         Parameters
         ----------
-        postings: list[tuple]
+        postings: list[dict]
             The postings from the Hackernews API, which should be a list of
-            tuples containing (year, text)
+            dicts containing keys for post_id, post_year, and post_text
 
         Returns
         -------
@@ -40,7 +41,11 @@ class Database:
         """
         try:
             self.cursor.executemany(
-                "INSERT INTO postings (year, text) VALUES (?, ?)", postings
+                (
+                    "INSERT INTO postings (comment_id, year, text) VALUES "
+                    "(:post_id, :post_time, :post_text)"
+                ),
+                postings,
             )
             self.conn.commit()
             return True
