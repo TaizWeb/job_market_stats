@@ -72,3 +72,9 @@ class Database:
         params = (year, f"%{query}%")
         self.cursor.execute(statement, params)
         return self.cursor.fetchall()
+
+    def dump_database(self):
+        """Dump the DB"""
+        statement = """SELECT * FROM postings;"""
+        self.cursor.execute(statement)
+        return self.cursor.fetchall()
