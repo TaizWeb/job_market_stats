@@ -1,5 +1,6 @@
 """Database manager"""
 
+import datetime
 import sqlite3
 
 
@@ -68,13 +69,20 @@ class Database:
         results:
             The matching results from the query
         """
-        statement = """SELECT * FROM postings WHERE year = ? AND text LIKE ?"""
-        params = (year, f"%{query}%")
+        statement = """SELECT * FROM postings WHERE
+        strftime('%Y', datetime(year, 'unixepoch')) = ? AND text LIKE ?"""
+        params = (str(year), f"%{query}%")
         self.cursor.execute(statement, params)
         return self.cursor.fetchall()
 
     def dump_database(self):
-        """Dump the DB"""
+        """Dump the entirety of the database's contents
+
+        Returns
+        -------
+        results:
+            The contents of every row within the DB
+        """
         statement = """SELECT * FROM postings;"""
         self.cursor.execute(statement)
         return self.cursor.fetchall()
