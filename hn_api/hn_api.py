@@ -42,7 +42,16 @@ class Api:
         """
         return f"https://news.ycombinator.com/item?id={thread_id}"
 
-    def get_hiring_threads(self, thread_count: int = None):
+    def is_hiring_thread(self, thread_id):
+        """Is this actually a hiring thread??"""
+        thread_link = f"{BASE_API_LINK}/item/{thread_id}.json"
+        try:
+            return "Ask HN: Who is hiring?" in self.link_to_json(thread_link)["title"]
+        except KeyError:
+            print(f"Error: {thread_link} is not a valid post")
+            return False
+
+    def get_hiring_threads(self, thread_count: int = None, offset: int = None):
         """Returns a list of hiring thread ids
 
         Parameters
@@ -56,7 +65,10 @@ class Api:
             A list of hiring thread IDs
         """
         json_link = f"{BASE_API_LINK}/user/{HIRING_BOT_ID}.json"
-        return self.link_to_json(json_link)["submitted"][:thread_count]
+        thread_ids = self.link_to_json(json_link)["submitted"]
+        return [
+            thread_id for thread_id in thread_ids if self.is_hiring_thread(thread_id)
+        ][offset : offset + thread_count]
 
     def get_top_level_comments(self, thread_id: str, child_count: int = None):
         """Returns a list of direct children IDs on a post
