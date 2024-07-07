@@ -11,6 +11,7 @@ class Database:
         self.conn = sqlite3.connect("postings.db")
         self.cursor = self.conn.cursor()
         self.init_db()
+        self.comment_ids = self.get_comment_ids()
 
     def init_db(self):
         """Initializes the DB if it's not already"""
@@ -24,6 +25,12 @@ class Database:
             )
         """
         )
+
+    def get_comment_ids(self):
+        """Gets all unique thread ids, to save time"""
+        statement = """SELECT comment_id FROM postings;"""
+        self.cursor.execute(statement)
+        return self.cursor.fetchall()
 
     def add_postings(self, postings: list):
         """Add a posting to the database
