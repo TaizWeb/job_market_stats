@@ -1,6 +1,7 @@
 """Database manager"""
 
 import datetime
+import itertools
 import sqlite3
 
 
@@ -11,7 +12,7 @@ class Database:
         self.conn = sqlite3.connect("postings.db")
         self.cursor = self.conn.cursor()
         self.init_db()
-        self.comment_ids = self.get_comment_ids()
+        self.comment_ids = list(itertools.chain(*self.get_comment_ids()))
 
     def init_db(self):
         """Initializes the DB if it's not already"""
