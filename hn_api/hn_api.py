@@ -96,11 +96,12 @@ class Api:
             return
 
         try:
-            return {
+            post_dict = {
                 "post_id": int(thread_id),
-                "post_time": parent_json["time"],
+                "post_time": int(parent_json["time"]),
                 "post_text": parent_json["text"],
             }
+            return post_dict
         except KeyError:
             print("KEY ERR")
             print(parent_json)
