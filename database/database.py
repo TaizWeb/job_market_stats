@@ -40,19 +40,20 @@ class Database:
         status: bool
             Whether the operation succeeded
         """
-        try:
-            self.cursor.executemany(
-                (
-                    "INSERT INTO postings (comment_id, year, text) VALUES "
-                    "(:post_id, :post_time, :post_text)"
-                ),
-                postings,
-            )
-            self.conn.commit()
-            return True
-        except sqlite3.IntegrityError as e:
-            print(f"Encountered DB error {e}")
-            return False
+        for posting in postings:
+            try:
+                self.cursor.execute(
+                    (
+                        "INSERT INTO postings (comment_id, year, text) VALUES "
+                        "(:post_id, :post_time, :post_text)"
+                    ),
+                    posting,
+                )
+                self.conn.commit()
+            except (sqlite3.IntegrityError, ValueError) as e:
+                print(f"Encountered DB error {e}")
+                print(f"Cause was {posting}")
+        return True
 
     def query_postings(self, year: int = None, query: str = None):
         """Get the postings fitting the parameters
