@@ -41,5 +41,6 @@ def get_results(search_year: int, search_term: str):
 # collect_data(thread_count=30, offset=40)
 # NOTE: Got first 70/158
 
-get_results(2018, "Javascript")
-export.to_csv(db, 2020, 2023, "languages")
+# get_results(2023, "Javascript")
+# get_results(2022, "Javascript")
+export.to_csv(db, 2020, 2023, "languages", "refined.csv")

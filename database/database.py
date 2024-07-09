@@ -63,7 +63,9 @@ class Database:
                 print(f"Cause was {posting}")
         return True
 
-    def query_postings(self, year: int = None, query: str = None):
+    def query_postings(
+        self, year: int = None, query: str = None, case_sensitive: bool = False
+    ):
         """Get the postings fitting the parameters
 
         Parameters
@@ -78,9 +80,15 @@ class Database:
         results:
             The matching results from the query
         """
-        statement = """SELECT * FROM postings WHERE
-        strftime('%Y', datetime(year, 'unixepoch')) = ? AND text LIKE ?"""
-        params = (str(year), f"%{query}%")
+        if case_sensitive:
+            params = (str(year), f"*{query}*")
+            text_form = "GLOB"
+        else:
+            params = (str(year), f"%{query}%")
+            text_form = "LIKE"
+        statement = f"""SELECT * FROM postings
+        WHERE strftime('%Y', datetime(year, 'unixepoch')) = ?
+        AND text {text_form} ?"""
         self.cursor.execute(statement, params)
         return self.cursor.fetchall()
 

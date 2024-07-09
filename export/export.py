@@ -25,8 +25,14 @@ class Export:
             data = {"Technology": [], "Count": [], "Year": []}
             for tech in TECHS[category]:
                 for year in list(range(year_start, year_end + 1)):
-                    data["Technology"].append(tech)
+                    data["Technology"].append(tech["name"])
                     data["Year"].append(year)
-                    data["Count"].append(len(database.query_postings(year, tech)))
+                    data["Count"].append(
+                        len(
+                            database.query_postings(
+                                year, tech["name"], tech["case_sensitive"]
+                            )
+                        )
+                    )
             df = pd.DataFrame(data)
             df.to_csv(filename, index=False)
