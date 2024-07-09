@@ -3,21 +3,19 @@
 import itertools
 
 from database import Database
+from export import Export
 from hn_api import Api
 
 db = Database()
 api = Api()
+export = Export()
 
 
 def collect_data(thread_count: int, offset: int = 0):
     """Collect the data and add it to the DB"""
     # The past N months of threads
-    threads = api.get_hiring_threads(thread_count)
+    threads = api.get_hiring_threads(thread_count, offset)
     threads = [thread for thread in threads if thread not in db.comment_ids]
-    print(f"DB: {db.comment_ids}")
-    print(f"THREADS: {threads}")
-    print(f"Got {len(threads)} to grab!")
-
     # Getting the child comment IDs for each thread
     comments = [api.get_top_level_comments(thread) for thread in threads]
     flattened_comments = list(itertools.chain(*comments))
@@ -39,4 +37,9 @@ def get_results(search_year: int, search_term: str):
     )
 
 
-get_results(2024, "Rust")
+# Add more entries to the DB
+# collect_data(thread_count=30, offset=40)
+# NOTE: Got first 70/158
+
+get_results(2018, "Javascript")
+export.to_csv(db, 2020, 2023, "languages")
