@@ -3,14 +3,22 @@
 TECHS = {
     "languages": [
         {"name": "Python", "case_sensitive": False, "aliases": []},
-        {"name": "JavaScript", "case_sensitive": False, "aliases": ["JS"]},
+        {
+            "name": "JavaScript",
+            "case_sensitive": True,
+            "aliases": ["Javascript", " JS "],
+        },
         {"name": "Java ", "case_sensitive": False, "aliases": []},
         {"name": "C#", "case_sensitive": False, "aliases": []},
         {"name": "C++", "case_sensitive": False, "aliases": []},
-        {"name": "Go", "case_sensitive": True, "aliases": ["Golang"]},
+        {"name": " Go ", "case_sensitive": True, "aliases": ["Golang"]},
         {"name": "Kotlin", "case_sensitive": False, "aliases": []},
         {"name": "Swift", "case_sensitive": True, "aliases": []},
-        {"name": "TypeScript", "case_sensitive": False, "aliases": ["TS"]},
+        {
+            "name": "TypeScript",
+            "case_sensitive": True,
+            "aliases": ["Typescript", " TS "],
+        },
         {"name": "Ruby", "case_sensitive": False, "aliases": []},
         {"name": "PHP", "case_sensitive": False, "aliases": []},
         {"name": "Rust", "case_sensitive": False, "aliases": []},
