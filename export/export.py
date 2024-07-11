@@ -1,5 +1,6 @@
 """Export class"""
 
+import matplotlib.pyplot as plt
 import pandas as pd
 
 # from export import TECHS
@@ -36,3 +37,34 @@ class Export:
                     data["Count"].append(total_count)
             df = pd.DataFrame(data)
             df.to_csv(filename, index=False)
+
+    def to_plot(self, csv_path):
+        # Read the CSV data into a DataFrame
+        data = pd.read_csv(csv_path)
+
+        # Pivot the data to make it easier to plot
+        pivot_data = data.pivot(index="Year", columns="Technology", values="Count")
+
+        # Plotting
+        plt.figure(figsize=(10, 6))
+
+        # Line styles, since this many data points is bad
+        styles = ["-", "--", "-.", ":"]
+
+        # Plot each technology's data
+        for idx, tech in enumerate(pivot_data.columns):
+            plt.plot(
+                pivot_data.index,
+                pivot_data[tech],
+                linestyle=styles[idx % len(styles)],
+                label=tech,
+            )
+
+        # Adding titles and labels
+        plt.title("HN Job Requirements Over Time")
+        plt.xlabel("Year")
+        plt.ylabel("Job Postings")
+        plt.legend(title="Technology")
+
+        # Show the plot
+        plt.show()
