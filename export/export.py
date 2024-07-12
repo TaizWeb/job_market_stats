@@ -18,6 +18,7 @@ class Export:
         database,
         year_start: int,
         year_end: int,
+        month_step: int = 12,
         category: str = None,
         filename: str = "data.csv",
     ):
@@ -31,9 +32,12 @@ class Export:
                     names = [tech["name"]] + tech["aliases"]
                     total_count = 0
                     for name in names:
-                        total_count += len(
-                            database.query_postings(year, name, tech["case_sensitive"])
-                        )
+                        for step in range(int(12 / month_step)):
+                            total_count += len(
+                                database.query_postings(
+                                    year, step, name, tech["case_sensitive"]
+                                )
+                            )
                     data["Count"].append(total_count)
             df = pd.DataFrame(data)
             df.to_csv(filename, index=False)
