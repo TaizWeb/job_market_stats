@@ -15,14 +15,30 @@ class Export:
 
     def to_csv(
         self,
-        database,
+        database: "Database",
         year_start: int,
         year_end: int,
         month_step: int = 12,
         category: str = None,
         filename: str = "data.csv",
     ):
-        """Converts the data at the columns to a CSV"""
+        """Converts the data at the columns to a CSV
+
+        Parameters
+        ----------
+        database: Database
+            The reference to the database object
+        year_start: int
+            The starting point of the years to export
+        year_end: int
+            The ending point of the years to export
+        month_step: int
+            How often between individual years to export
+        category: str
+            Which section of search_terms.py to export
+        filename: str
+            The filename to use for the exported .csv file
+        """
         if category is not None:
             data = {"Technology": [], "Count": [], "Year": []}
             for tech in TECHS[category]:
@@ -43,6 +59,13 @@ class Export:
             df.to_csv(filename, index=False)
 
     def to_plot(self, csv_path):
+        """Plots the data to a popup window
+
+        Parameters
+        ----------
+        csv_path: str
+            The path to the .csv file (created from to_csv) to plot
+        """
         # Read the CSV data into a DataFrame
         data = pd.read_csv(csv_path)
 
