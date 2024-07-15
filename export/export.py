@@ -54,29 +54,34 @@ class Export:
             The starting point of the years to export
         year_end: int
             The ending point of the years to export
-        month_step: int
+        month_step: int = 12
             How often between individual years to export
-        category: str
+        category: str = None
             Which section of search_terms.py to export
-        filename: str
+        filename: str = "data.csv"
             The filename to use for the exported .csv file
         """
         if category is not None:
             data = {"Technology": [], "Count": [], "Year": []}
+            # For each technology
             for tech in TECHS[category]:
+                # For each year
                 for year in list(range(year_start, year_end + 1)):
-                    data["Technology"].append(tech["name"])
-                    data["Year"].append(year)
                     names = [tech["name"]] + tech["aliases"]
                     total_count = 0
-                    for name in names:
-                        for step in range(int(12 / month_step)):
+                    for step in range(0, 12, month_step):
+                        data["Technology"].append(tech["name"])
+                        if step > 0:
+                            data["Year"].append(year + round(step / 12, 2))
+                        else:
+                            data["Year"].append(year)
+                        for name in names:
                             total_count += len(
                                 database.query_postings(
-                                    year, step, name, tech["case_sensitive"]
+                                    year, step + 1, name, tech["case_sensitive"]
                                 )
                             )
-                    data["Count"].append(total_count)
+                        data["Count"].append(total_count)
             df = pd.DataFrame(data)
             df.to_csv(filename, index=False)
 

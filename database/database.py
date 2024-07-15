@@ -36,8 +36,8 @@ class Database:
         Dumps the entirety of the database's contents, used for debuggging
     """
 
-    def __init__(self):
-        self.conn = sqlite3.connect("postings.db")
+    def __init__(self, db_path: str):
+        self.conn = sqlite3.connect(db_path)
         self.cursor = self.conn.cursor()
         self.init_db()
         self.comment_ids = list(itertools.chain(*self.get_comment_ids()))
