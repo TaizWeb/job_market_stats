@@ -6,8 +6,11 @@ from database import Database
 from export import Export
 from hn_api import Api
 
+BASE_API_LINK = "https://hacker-news.firebaseio.com/v0"
+HIRING_BOT_ID = "whoishiring"
+
 db = Database()
-api = Api()
+api = Api(BASE_API_LINK, HIRING_BOT_ID)
 export = Export()
 
 

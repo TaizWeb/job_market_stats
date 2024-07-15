@@ -64,7 +64,6 @@ class Database:
     def add_postings(self, postings: list):
         """Add a posting to the database
 
-
         Parameters
         ----------
         postings: list[dict]
