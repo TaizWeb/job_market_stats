@@ -68,8 +68,8 @@ class Export:
                 # For each year
                 for year in list(range(year_start, year_end + 1)):
                     names = [tech["name"]] + tech["aliases"]
-                    total_count = 0
                     for step in range(0, 12, month_step):
+                        total_count = 0
                         data["Technology"].append(tech["name"])
                         if step > 0:
                             data["Year"].append(year + round(step / 12, 2))
