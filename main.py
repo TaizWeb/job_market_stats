@@ -43,4 +43,12 @@ def get_results(search_year: int, search_term: str):
 
 # get_results(2023, "Javascript")
 # get_results(2022, "Javascript")
-export.to_csv(db, 2020, 2023, "languages", "refined.csv")
+export.to_csv(
+    database=db,
+    year_start=2020,
+    year_end=2023,
+    month_step=1,
+    category="web",
+    filename="web.csv",
+)
+export.to_plot("web.csv")
