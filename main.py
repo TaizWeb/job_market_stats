@@ -11,7 +11,7 @@ HIRING_BOT_ID = "whoishiring"
 
 db = Database(db_path="postings.db")
 api = Api(BASE_API_LINK, HIRING_BOT_ID)
-export = Export()
+export = Export(database=db)
 
 
 def collect_data(thread_count: int, offset: int = 0):
@@ -44,14 +44,12 @@ def get_results(search_year: int, search_term: str):
 # collect_data(thread_count=30, offset=40)
 # NOTE: Got first 70/158
 
-# get_results(2023, "Javascript")
-# get_results(2022, "Javascript")
-export.to_csv(
-    database=db,
+stats_data = export.get_data(
     year_start=2020,
     year_end=2023,
     month_step=1,
     category="web",
-    filename="web.csv",
 )
-export.to_plot("web.csv")
+
+export.to_csv(stats_data, "test.csv")
+export.to_plot("test.csv")
