@@ -60,10 +60,10 @@ TECHS = {
         {"name": "Neo4j", "case_sensitive": False, "aliases": []},
     ],
     "web": [
-        "HTML",
+        {"name": "HTML", "case_sensitive": False, "aliases": []},
         {"name": "CSS", "case_sensitive": False, "aliases": []},
         {"name": "Sass", "case_sensitive": False, "aliases": []},
-        {"name": "Less", "case_sensitive": False, "aliases": []},
+        {"name": "Less", "case_sensitive": True, "aliases": []},
         {"name": "Svelte", "case_sensitive": False, "aliases": []},
         {"name": "Bootstrap", "case_sensitive": False, "aliases": []},
         {"name": "Tailwind", "case_sensitive": False, "aliases": ["TailwindCSS"]},

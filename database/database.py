@@ -1,4 +1,4 @@
-"""Database manager"""
+"""Module containing a class to interact with the database"""
 
 import datetime
 import itertools
@@ -6,10 +6,38 @@ import sqlite3
 
 
 class Database:
-    """docstring for Database."""
+    """Class for interacting with the database
 
-    def __init__(self):
-        self.conn = sqlite3.connect("postings.db")
+    Attributes
+    ----------
+    conn:
+        The connection to the database
+    cursor:
+        The cursor for the database
+    comment_ids: list[tuple]
+        A list of unique comment IDs, to avoid duplicate API calls
+
+    Methods
+    -------
+    init_db()
+        Initializes the database if it's not already
+    get_comment_ids()
+        Gets the comment IDs previously obtained in the DB
+    add_postings(postings: list)
+        Adds `postings` to the database
+    query_postings(
+        year: int = None,
+        month: int = None,
+        query: str = None,
+        case_sensitive: bool = False,
+    )
+        Returns a list of results that match the parameters
+    dump_database()
+        Dumps the entirety of the database's contents, used for debuggging
+    """
+
+    def __init__(self, db_path: str):
+        self.conn = sqlite3.connect(db_path)
         self.cursor = self.conn.cursor()
         self.init_db()
         self.comment_ids = list(itertools.chain(*self.get_comment_ids()))
@@ -35,7 +63,6 @@ class Database:
 
     def add_postings(self, postings: list):
         """Add a posting to the database
-
 
         Parameters
         ----------
@@ -74,10 +101,14 @@ class Database:
 
         Parameters
         ----------
-        year: int
+        year: int = None
             The year of results to query
-        query: str
+        month: int = None
+            The month of results to query, e.g. January = 1
+        query: str = None
             The term to search by
+        case-sensitive: bool = False
+            If the term should be case-sensitive, useful for "go" vs "Go"
 
         Returns
         -------
