@@ -8,7 +8,28 @@ from .search_terms import TECHS
 
 
 class Export:
-    """docstring for Export."""
+    """Class for exporting to various formats, namely csv and plots
+
+    Attributes
+    ----------
+    None : None
+        TODO: Refactor the to_csv to use the init instead
+
+    Methods
+    -------
+    to_csv(
+        database: "Database",
+        year_start: int,
+        year_end: int,
+        month_step: int = 12,
+        category: str = None,
+        filename: str = "data.csv",
+    )
+        Converts the data at the columns to a CSV
+
+    to_plot(csv_path)
+        Plots the data to a popup window
+    """
 
     def __init__(self):
         pass
