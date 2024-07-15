@@ -1,4 +1,5 @@
-"""Export class"""
+"""Module containing the Export class, which provides ways to export the DB
+contents into various formats"""
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -27,7 +28,7 @@ class Export:
     )
         Converts the data at the columns to a CSV
 
-    to_plot(csv_path)
+    to_plot(csv_path: str)
         Plots the data to a popup window
     """
 
@@ -43,7 +44,7 @@ class Export:
         category: str = None,
         filename: str = "data.csv",
     ):
-        """Converts the data at the columns to a CSV
+        """Converts the data at the columns to a CSV, creating the file
 
         Parameters
         ----------
@@ -79,7 +80,7 @@ class Export:
             df = pd.DataFrame(data)
             df.to_csv(filename, index=False)
 
-    def to_plot(self, csv_path):
+    def to_plot(self, csv_path: str):
         """Plots the data to a popup window
 
         Parameters
