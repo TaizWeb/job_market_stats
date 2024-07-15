@@ -3,12 +3,36 @@
 import json
 import urllib.request
 
-BASE_API_LINK = "https://hacker-news.firebaseio.com/v0"
-HIRING_BOT_ID = "whoishiring"
-
 
 class Api:
-    """Class to handle HackerNews API calls"""
+    """Class for interacting with the HN API
+
+    Attributes
+    ----------
+    api_link: str
+        The link to the API endpoint
+    bot_id: str
+        The name of the hiring bot to scrape posts from
+
+    Methods
+    -------
+    link_to_json(link)
+        Converts a link into a JSON dictionary containing the API info
+    get_user_thread_link(thread_id: str)
+        Gets a user-friendly link from a thread_id
+    is_hiring_thread(thread_id: str)
+        Dictates if the thread is actually a hiring thread
+    get_hiring_threads(thread_count: int = None, offset: int = None)
+        Gets a list of hiring thread IDs and returns it
+    get_top_level_comments(thread_id: str, child_count: int = None)
+        Gets a list of top-level comment IDs of thread_id
+    get_thread_info(thread_id: str)
+        Gets info of a thread, namely the id, time, and text. Used for the DB
+    """
+
+    def __init__(self, api_link: str, bot_id: str):
+        self.api_link = api_link
+        self.bot_id = bot_id
 
     def link_to_json(self, link: str):
         """Get a link, convert it to a JSON dict, and return it
@@ -42,9 +66,9 @@ class Api:
         """
         return f"https://news.ycombinator.com/item?id={thread_id}"
 
-    def is_hiring_thread(self, thread_id):
+    def is_hiring_thread(self, thread_id: str):
         """Is this actually a hiring thread??"""
-        thread_link = f"{BASE_API_LINK}/item/{thread_id}.json"
+        thread_link = f"{self.api_link}/item/{thread_id}.json"
         try:
             return "Ask HN: Who is hiring?" in self.link_to_json(thread_link)["title"]
         except KeyError:
@@ -64,7 +88,7 @@ class Api:
         thread_list: list[str]
             A list of hiring thread IDs
         """
-        json_link = f"{BASE_API_LINK}/user/{HIRING_BOT_ID}.json"
+        json_link = f"{self.api_link}/user/{self.bot_id}.json"
         thread_ids = self.link_to_json(json_link)["submitted"]
         return [
             thread_id for thread_id in thread_ids if self.is_hiring_thread(thread_id)
@@ -85,7 +109,7 @@ class Api:
         child_links: list[str]
             A list of child comment IDs
         """
-        parent_link = f"{BASE_API_LINK}/item/{thread_id}.json"
+        parent_link = f"{self.api_link}/item/{thread_id}.json"
         return self.link_to_json(parent_link)["kids"][:child_count]
 
     def get_thread_info(self, thread_id: str):
@@ -98,14 +122,15 @@ class Api:
 
         Returns
         -------
-        post_contents: dict
-            A dict containing the post's id, creation time, and body text
+        post_contents: dict | bool
+            A dict containing the post's id, creation time, and body text. If
+            this doesn't work, return `False`
         """
-        parent_link = f"{BASE_API_LINK}/item/{thread_id}.json"
+        parent_link = f"{self.api_link}/item/{thread_id}.json"
         parent_json = self.link_to_json(parent_link)
         # Dead/deleted posts are still returned, handling them
         if "deleted" in parent_json:
-            return
+            return False
 
         try:
             post_dict = {
@@ -117,3 +142,4 @@ class Api:
         except KeyError:
             print("KEY ERR")
             print(parent_json)
+            return False

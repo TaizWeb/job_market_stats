@@ -6,8 +6,11 @@ from database import Database
 from export import Export
 from hn_api import Api
 
-db = Database()
-api = Api()
+BASE_API_LINK = "https://hacker-news.firebaseio.com/v0"
+HIRING_BOT_ID = "whoishiring"
+
+db = Database(db_path="postings.db")
+api = Api(BASE_API_LINK, HIRING_BOT_ID)
 export = Export()
 
 
@@ -43,4 +46,11 @@ def get_results(search_year: int, search_term: str):
 
 # get_results(2023, "Javascript")
 # get_results(2022, "Javascript")
-export.to_csv(db, 2020, 2023, "languages", "refined.csv")
+export.to_csv(
+    database=db,
+    year_start=2020,
+    year_end=2023,
+    month_step=4,
+    category="languages",
+    filename="refined.csv",
+)
