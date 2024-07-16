@@ -19,71 +19,122 @@ class Export:
     Methods
     -------
     to_csv(
-        database: "Database",
         year_start: int,
         year_end: int,
         month_step: int = 12,
-        category: str = None,
-        filename: str = "data.csv",
+        category: str = "languages",
     )
-        Converts the data at the columns to a CSV
-
+        Generates a dict representing the statistics. Used in other class
+        methods to display/export the data
+    to_csv(stats_dict: dict, filename: str)
+        Exports the data dict to a CSV
     to_plot(csv_path: str)
         Plots the data to a popup window
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, database: "Database"):
+        self.database = database
 
-    def to_csv(
+    def get_data(
         self,
-        database: "Database",
         year_start: int,
         year_end: int,
         month_step: int = 12,
-        category: str = None,
-        filename: str = "data.csv",
+        category: str = "languages",
     ):
-        """Converts the data at the columns to a CSV, creating the file
+        """Returns a dict representing the statistics
 
         Parameters
         ----------
-        database: Database
-            The reference to the database object
         year_start: int
             The starting point of the years to export
         year_end: int
             The ending point of the years to export
         month_step: int = 12
             How often between individual years to export
-        category: str = None
-            Which section of search_terms.py to export
-        filename: str = "data.csv"
-            The filename to use for the exported .csv file
+        category: str = "languages"
+            Which section of `search_terms.py` to export
+
+        Returns
+        -------
+        stats_dict: dict
+            The statistics of each technology, per year and count
         """
-        if category is not None:
-            data = {"Technology": [], "Count": [], "Year": []}
-            # For each technology
-            for tech in TECHS[category]:
-                # For each year
-                for year in list(range(year_start, year_end + 1)):
-                    names = [tech["name"]] + tech["aliases"]
-                    for step in range(0, 12, month_step):
-                        total_count = 0
-                        data["Technology"].append(tech["name"])
-                        if step > 0:
-                            data["Year"].append(year + round(step / 12, 2))
-                        else:
-                            data["Year"].append(year)
-                        for name in names:
-                            total_count += len(
-                                database.query_postings(
-                                    year, step + 1, name, tech["case_sensitive"]
-                                )
+        data = {"Technology": [], "Count": [], "Year": []}
+        # For each technology
+        for tech in TECHS[category]:
+            # For each year
+            for year in list(range(year_start, year_end + 1)):
+                names = [tech["name"]] + tech["aliases"]
+                for step in range(0, 12, month_step):
+                    total_count = 0
+                    data["Technology"].append(tech["name"])
+                    if step > 0:
+                        data["Year"].append(year + round(step / 12, 2))
+                    else:
+                        data["Year"].append(year)
+                    for name in names:
+                        total_count += len(
+                            self.database.query_postings(
+                                year, step + 1, name, tech["case_sensitive"]
                             )
-                        data["Count"].append(total_count)
-            df = pd.DataFrame(data)
-            df.to_csv(filename, index=False)
+                        )
+                    data["Count"].append(total_count)
+        return data
+
+    def filter_data(
+        self,
+        stats_dict: dict,
+        include: list = None,
+        exclude: list = None,
+        in_place: bool = False,
+    ):
+        """Filters language terms from the dataset
+
+        Parameters
+        ----------
+        stats_dict: dict
+            The statistics of each technology, per year and count
+        include: list = None
+            Which terms to explicitly include
+        exclude: list = None
+            Which terms to explicitly exclude
+        in_place: bool = False
+            If true, will adjust stats_dict automatically
+
+        Returns
+        -------
+        stats_dict: dict | None
+            The modified stats_dict if in_place is False, otherwise, None
+        """
+        stats_dict_copy = {
+            "Technology": [],
+            "Count": [],
+            "Year": [],
+        }
+        for i, tech in enumerate(stats_dict["Technology"]):
+            if tech in include and tech not in exclude:
+                stats_dict_copy["Technology"].append(stats_dict["Technology"][i])
+                stats_dict_copy["Count"].append(stats_dict["Count"][i])
+                stats_dict_copy["Year"].append(stats_dict["Year"][i])
+        if in_place:
+            stats_dict.clear()
+            stats_dict.update(stats_dict_copy)
+            return None
+        return stats_dict_copy
+
+    def to_csv(self, stats_dict: dict, filename: str):
+        """Exports the data dict to a CSV
+
+        Parameters
+        ----------
+        stats_dict: dict
+            The stats_dict generated by `get_data`
+        filename: str
+            The filename to save the CSV as
+        """
+        df = pd.DataFrame(stats_dict)
+        df.to_csv(filename, index=False)
 
     def to_plot(self, csv_path: str):
         """Plots the data to a popup window
