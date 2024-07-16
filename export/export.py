@@ -82,6 +82,47 @@ class Export:
                     data["Count"].append(total_count)
         return data
 
+    def filter_data(
+        self,
+        stats_dict: dict,
+        include: list = None,
+        exclude: list = None,
+        in_place: bool = False,
+    ):
+        """Filters language terms from the dataset
+
+        Parameters
+        ----------
+        stats_dict: dict
+            The statistics of each technology, per year and count
+        include: list = None
+            Which terms to explicitly include
+        exclude: list = None
+            Which terms to explicitly exclude
+        in_place: bool = False
+            If true, will adjust stats_dict automatically
+
+        Returns
+        -------
+        stats_dict: dict | None
+            The modified stats_dict if in_place is False, otherwise, None
+        """
+        stats_dict_copy = {
+            "Technology": [],
+            "Count": [],
+            "Year": [],
+        }
+        for i, tech in enumerate(stats_dict["Technology"]):
+            if tech in include and tech not in exclude:
+                stats_dict_copy["Technology"].append(stats_dict["Technology"][i])
+                stats_dict_copy["Count"].append(stats_dict["Count"][i])
+                stats_dict_copy["Year"].append(stats_dict["Year"][i])
+        if in_place:
+            stats_dict.clear()
+            stats_dict.update(stats_dict_copy)
+            return None
+        return stats_dict_copy
+
     def to_csv(self, stats_dict: dict, filename: str):
         """Exports the data dict to a CSV
 
