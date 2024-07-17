@@ -174,7 +174,7 @@ class Export:
         # Show the plot
         plt.show()
 
-    def to_pie_chart(self, stats_dict: dict, year: int):
+    def to_pie_chart(self, stats_dict: dict, year: int, include_zeroes: bool = False):
         """Creates a pie chart of technologies per given year"""
         df = pd.DataFrame(stats_dict)
 
@@ -184,8 +184,16 @@ class Export:
         pivot_data = filtered_df.pivot_table(index="Technology", values="Count")
 
         # Setting our axis
-        labels = pivot_data.index
-        sizes = pivot_data["Count"]
+        if include_zeroes:
+            labels = pivot_data.index
+            sizes = pivot_data["Count"]
+        else:
+            labels = [
+                label
+                for label, size in zip(pivot_data.index, pivot_data["Count"])
+                if size > 0
+            ]
+            sizes = [size for size in pivot_data["Count"] if size > 0]
 
         # Plot it
         plt.pie(sizes, labels=labels, autopct="%1.1f%%", startangle=140)
