@@ -136,13 +136,16 @@ class Export:
         df = pd.DataFrame(stats_dict)
         df.to_csv(filename, index=False)
 
-    def to_plot(self, csv_path: str):
+    def to_plot(self, csv_path: str, save_as: str = None):
         """Plots the data to a popup window
 
         Parameters
         ----------
         csv_path: str
             The path to the .csv file (created from to_csv) to plot
+        save_as: str = None
+            The path to save the plot to. Support various extensions like .png,
+            .csv, and .pdf
         """
         # Read the CSV data into a DataFrame
         data = pd.read_csv(csv_path)
@@ -171,11 +174,34 @@ class Export:
         plt.ylabel("Job Postings")
         plt.legend(title="Technology")
 
+        # Export to disk
+        if save_as is not None:
+            plt.savefig(save_as)
+
         # Show the plot
         plt.show()
 
-    def to_pie_chart(self, stats_dict: dict, year: int, include_zeroes: bool = False):
-        """Creates a pie chart of technologies per given year"""
+    def to_pie_chart(
+        self,
+        stats_dict: dict,
+        year: int,
+        include_zeroes: bool = False,
+        save_as: str = None,
+    ):
+        """Creates a pie chart of technologies per given year
+
+        Parameters
+        ----------
+        stats_dict: dict
+            The statistics of each technology, per year and count
+        year: int
+            The year of data to plot
+        include_zeroes: bool = False
+            Whether or not to bother including zeroes
+        save_as: str = None
+            The path to save the plot to. Support various extensions like .png,
+            .csv, and .pdf
+        """
         df = pd.DataFrame(stats_dict)
 
         filtered_df = df[df["Year"] == year]
@@ -198,6 +224,11 @@ class Export:
         # Plot it
         plt.pie(sizes, labels=labels, autopct="%1.1f%%", startangle=140)
         plt.axis("equal")
-
         plt.title(f"HN Job Requirements in {year}")
+
+        # Export to disk
+        if save_as is not None:
+            plt.savefig(save_as)
+
+        # Show the plot
         plt.show()
