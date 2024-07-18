@@ -3,6 +3,7 @@
 import datetime
 import itertools
 import sqlite3
+import time
 
 
 class Database:
@@ -137,5 +138,35 @@ class Database:
             The contents of every row within the DB
         """
         statement = """SELECT * FROM postings;"""
+        self.cursor.execute(statement)
+        return self.cursor.fetchall()
+
+    def dump_database_interval(
+        self, start_date: str = "2018-01-01", end_date: str = "2024-01-01"
+    ):
+        """Dump the entirety of the database's contents per a given time tange
+
+        Parameters
+        ----------
+        start_date: str = "2018-01-01"
+            The starting date of results to fetch
+        end_date: str = "2018-01-01"
+            The ending date of results to fetch
+
+        Returns
+        -------
+        results:
+            The contents of every row within the DB
+
+        Note
+        ----
+        The format is in yyyy-MM-dd format
+        """
+        # Convert to Unix time
+        start_time = int(time.mktime(time.strptime(start_date, "%Y-%m-%d")))
+        end_time = int(time.mktime(time.strptime(end_date, "%Y-%m-%d")))
+
+        statement = f"""SELECT * FROM postings WHERE
+        year BETWEEN {start_time} AND {end_time};"""
         self.cursor.execute(statement)
         return self.cursor.fetchall()
