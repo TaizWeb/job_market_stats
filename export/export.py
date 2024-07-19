@@ -53,7 +53,9 @@ class Export:
         month_step: int = 12
             How often between individual years to export
         category: str = "languages"
-            Which section of `search_terms.py` to export
+            Which section of `search_terms.py` to export. The available terms
+            are: languages, frameworks, databases, web, old_js_frameworks,
+            mobile, and misc
 
         Returns
         -------
